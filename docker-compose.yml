@@ -1,0 +1,35 @@
+version: "3.3"
+services:
+
+  api:
+    build:
+      context: ./back
+    ports:
+      - 5000:5000
+    environment:
+      - DATABASE_HOST=database
+    depends_on:
+      - database
+
+  database:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+    volumes:
+      - ./volumes/database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  frontend:
+    build:
+      context: ./front
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+      - POSTGRES_PASSWORD=test
+    ports:
+      - 8000:3000
+    depends_on:
+      - api
+
+
